@@ -28,30 +28,47 @@ namespace TicTacToe
             
             TicTacToeGame tTTGame = new TicTacToeGame();
             tTTGame.Game(int.Parse(Value));
+            WriteLine("Закончили.");
         }
     }
 
     class TicTacToeGame
     {
         TTTField GameField;
-        bool GameIsOver;
 
         public TicTacToeGame()
         {
             GameField = new TTTField();
-            GameIsOver = false;
         }
 
-        /*public bool IsGameOver(ref bool GameIsOver)
+        private bool CheckForWinCombination(int Sign)
         {
-            if (GameField.ReturnSign(0,0) == )
-        }*/
+            if (GameField.ReturnSign(0, 0) == Sign && GameField.ReturnSign(0, 1) == Sign && GameField.ReturnSign(0, 2) == Sign)
+                return true;
+            else if (GameField.ReturnSign(0, 0) == Sign && GameField.ReturnSign(1, 1) == Sign && GameField.ReturnSign(2, 2) == Sign)
+                return true;
+            else if (GameField.ReturnSign(0, 0) == Sign && GameField.ReturnSign(1, 0) == Sign && GameField.ReturnSign(2, 0) == Sign)
+                return true;
+            else if (GameField.ReturnSign(0, 1) == Sign && GameField.ReturnSign(1, 1) == Sign && GameField.ReturnSign(2, 1) == Sign)
+                return true;
+            else if (GameField.ReturnSign(0, 2) == Sign && GameField.ReturnSign(1, 2) == Sign && GameField.ReturnSign(2, 2) == Sign)
+                return true;
+            else if (GameField.ReturnSign(1, 0) == Sign && GameField.ReturnSign(1, 1) == Sign && GameField.ReturnSign(1, 2) == Sign)
+                return true;
+            else if (GameField.ReturnSign(2, 0) == Sign && GameField.ReturnSign(2, 1) == Sign && GameField.ReturnSign(2, 2) == Sign)
+                return true;
+            else if (GameField.ReturnSign(0, 2) == Sign && GameField.ReturnSign(1, 1) == Sign && GameField.ReturnSign(2, 0) == Sign)
+                return true;
+            else
+                return false;
+        }
 
-        public void PlayerMove(int Sign)
+        private void PlayerMove(int Sign)
         {
             int IntRow, IntCol;
             string? StrRow, StrCol;
             bool flag = false;
+
             do
             {
                 do
@@ -62,6 +79,7 @@ namespace TicTacToe
                     if (IntCol < -1 || IntCol > 2)
                         WriteLine("Повторите ввод!");
                 } while (IntCol < -1 || IntCol > 2);
+            
                 do
                 {
                     WriteLine("Введите координаты по \"y\":");
@@ -70,23 +88,24 @@ namespace TicTacToe
                     if (IntRow < -1 || IntRow > 2)
                         WriteLine("Повторите ввод!");
                 } while (IntRow < -1 || IntRow > 2);
+
                 if (GameField.ReturnSign(IntRow, IntCol) == 0)
                     flag = true;
                 if (!flag)
                     WriteLine("Неправильно введены координаты! Повторите ввод!");
             } while (!flag);
+
             GameField.SetSign(IntRow, IntCol, Sign);
         }
 
         public void Game(int Choice)
         {
             Clear();
-            bool SecondPlayerIsMoving;
+            bool SecondPlayerIsMoving, FirstPlayerIsWinner, SecondPlayerIsWinner;
             int Random0To1 = new Random().Next(1);
             bool IsOk = false;
             string? Value;
-            int FirstPlayerSign;
-            int SecondPlayerSign;
+            int FirstPlayerSign, SecondPlayerSign;
 
             if (Random0To1 == 1)
                 SecondPlayerIsMoving = true;
@@ -119,22 +138,22 @@ namespace TicTacToe
 
             do
             {
-                /*if (Choice == 2 || !SecondPlayerIsMoving)
+                if (Choice == 2 || !SecondPlayerIsMoving)
                 {
-                    //Clear();
+                    Clear();
                     GameField.PrintField();
-                }*/
-                GameField.PrintField();
+                }
+
                 if (SecondPlayerIsMoving)
                 {
                     if (Choice == 1)
                     {
-                        WriteLine("Ходит ии!");
+                        WriteLine("Ходит ии!");                        
                         int Row, Col;
                         do
                         {
-                            Row = new Random().Next(2);
-                            Col = new Random().Next(2);
+                            Row = new Random().Next() % 3;
+                            Col = new Random().Next() % 3;
                         } while (GameField.ReturnSign(Row, Col) != 0);
                         GameField.SetSign(Row, Col, SecondPlayerSign);
                     }
@@ -159,8 +178,28 @@ namespace TicTacToe
                     SecondPlayerIsMoving = true;
                 }
 
+                FirstPlayerIsWinner = CheckForWinCombination(FirstPlayerSign);
+                SecondPlayerIsWinner = CheckForWinCombination(SecondPlayerSign);
 
-            } while (!GameIsOver);
+                
+
+            } while (!FirstPlayerIsWinner && !SecondPlayerIsWinner && !GameField.IsFull());
+            if (FirstPlayerIsWinner)
+            {
+                if (Choice == 1)
+                    WriteLine("Победил игрок!");
+                else
+                    WriteLine("Победил первый игрок!");
+            }
+            else if (SecondPlayerIsWinner)
+            {
+                if (Choice == 1)
+                    WriteLine("Победил компьютер!");
+                else
+                    WriteLine("Победил второй игрок!");
+            }
+            else
+                WriteLine("Ничья!");
         }
 
     }
@@ -179,15 +218,9 @@ namespace TicTacToe
             return Field[Row, Column]; 
         }
 
-        public bool SetSign(int Row, int Column, int Sign)
+        public void SetSign(int Row, int Column, int Sign)
         {
-            if (Field[Row, Column] == 0)
-            {
-                Field[Row, Column] = Sign;
-                return true;
-            }
-            else 
-                return false;
+            Field[Row, Column] = Sign;                
         }
 
         public bool IsFull()
