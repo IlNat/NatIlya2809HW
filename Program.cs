@@ -94,18 +94,18 @@ namespace TicTacToe
                     WriteLine("\nВведите координаты по \"x\":");
                     StrCol = ReadLine();
                     IntCol = int.Parse(StrCol) - 1; 
-                    if (IntCol < -1 || IntCol > 2)
+                    if (IntCol < 0 || IntCol > 2)
                         WriteLine("Повторите ввод!");
-                } while (IntCol < -1 || IntCol > 2);
+                } while (IntCol < 0 || IntCol > 2);
             
                 do
                 {
                     WriteLine("Введите координаты по \"y\":");
                     StrRow = ReadLine();
                     IntRow = int.Parse(StrRow) - 1;
-                    if (IntRow < -1 || IntRow > 2)
+                    if (IntRow < 0 || IntRow > 2)
                         WriteLine("Повторите ввод!");
-                } while (IntRow < -1 || IntRow > 2);
+                } while (IntRow < 0 || IntRow > 2);
 
                 if (GameField.ReturnSign(IntRow, IntCol) == 0)
                     flag = true;
